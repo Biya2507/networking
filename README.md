@@ -21,14 +21,20 @@ GitHub Actions automates the full workflow after pushing code.
 
 # Folder Structure
 
-├── ansible/             # Ansible playbook for setup and deployment
-│   └── playbook.yml
-├── webapp/              # Web app source code and Dockerfile
-│   ├── index.html
-│   └── Dockerfile
-├── .github/workflows/   # GitHub Actions CI/CD workflow
-├── main.tf              # Terraform resources (EC2, SG, Key Pair)
-├── backend.tf           # Remote backend config for Terraform state
+.github/ — GitHub Actions workflow for CI/CD
+
+ansible/ — Ansible playbook for configuring the EC2 instance and deploying the app 
+
+webapp/ — Dockerfile and static HTML file for the containerized web application 
+
+.gitignore — Ignores sensitive and unnecessary files from Git tracking  
+
+README.md — Project documentation  
+
+backend.tf — Terraform remote backend configuration (S3)  
+
+main.tf — Terraform infrastructure code (VPC, EC2, Security Group, Key Pair)
+
 # Steps in the Workflow
 Push Code to GitHub
 → Triggers GitHub Actions.
