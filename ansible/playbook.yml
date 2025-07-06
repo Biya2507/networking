@@ -1,4 +1,4 @@
-- name: Deploy Docker App to EC2 Ubuntu
+- name: Deploy Docker
   hosts: all
   become: true
 
@@ -6,16 +6,6 @@
     - name: Update APT cache
       apt:
         update_cache: yes
-
-    - name: Install dependencies
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-          - ca-certificates
-          - curl
-          - gnupg
-          - python3-pip
 
     - name: Install Docker
       shell: apt install docker.io -y 
@@ -29,7 +19,7 @@
 
     - name: Create app directory
       file:
-        path: /home/ubuntu/webapp
+        path: /home/ubuntu/samplesite
         state: directory
         owner: ubuntu
         group: ubuntu
@@ -37,16 +27,16 @@
 
     - name: Copy application files to EC2
       copy:
-        src: ../webapp/
-        dest: /home/ubuntu/webapp/
+        src: ../samplesite/
+        dest: /home/ubuntu/samplesite/
         owner: ubuntu
         group: ubuntu
         mode: '0644'
 
     - name: Build Docker image
-      command: docker build -t webapp /home/ubuntu/webapp
+      command: docker build -t samplesite /home/ubuntu/samplesite
       args:
-        chdir: /home/ubuntu/webapp
+        chdir: /home/ubuntu/samplesite
 
     - name: Run Docker container
-      command: docker run -d --restart unless-stopped --name webapp -p 80:80 webapp
+      command: docker run -d --name samplesite -p 80:80 samplesite

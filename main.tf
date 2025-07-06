@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-central-1"
 }
 
 resource "tls_private_key" "ssh_key" {
@@ -8,13 +8,13 @@ resource "tls_private_key" "ssh_key" {
 }
 
 resource "aws_key_pair" "generated_key" {
-  key_name   = "key"
+  key_name   = "ca1"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
-
+#demo
 resource "local_file" "private_key_file" {
   content              = tls_private_key.ssh_key.private_key_pem
-  filename             = "${path.module}/ca1-key.pem"
+  filename             = "${path.module}/key.pem"
   file_permission      = "0400"
   directory_permission = "0700"
 }
@@ -34,11 +34,11 @@ data "aws_subnet" "default" {
     values = [data.aws_vpc.default.id]
   }
 
-  availability_zone = "us-east-1"
+  availability_zone = "eu-central-1a"
 }
 
-resource "aws_security_group" "web_sg" {
-  name        = "web-sg"
+resource "aws_security_group" "samplesite_sg" {
+  name        = "samplesite-sg"
   description = "Allow SSH, HTTP"
   vpc_id      = data.aws_vpc.default.id
 
@@ -61,24 +61,24 @@ resource "aws_security_group" "web_sg" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = "-1" 
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name = "AppSecSG"
+    Name = "SGsamplesite"
   }
 }
 
 resource "aws_instance" "web" {
-  ami                    = "ami-05d3e0186c058c4dd" 
-  instance_type          = "t3.micro"
+  ami                    = "ami-02003f9f0fde924ea" 
+  instance_type          = "t2.micro"
   subnet_id              = data.aws_subnet.default.id
   key_name               = aws_key_pair.generated_key.key_name
-  vpc_security_group_ids = [aws_security_group.web_sg.id]
+  vpc_security_group_ids = [aws_security_group.samplesite_sg.id]
 
   tags = {
-    Name = "Web-Server"
+    Name = "samplesite"
   }
 }
 
